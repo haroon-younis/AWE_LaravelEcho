@@ -22,9 +22,22 @@
         }
       }, // end of props
       methods: {
-        sendMessage(text){
-          console.log(text);
-        },
+        sendMessage(text){ // sends messages: accepts the message as a parameter
+          //console.log(text);
+          if (!this.contact) {
+            return;
+          }
+
+          axios.post('/conversation/send', {
+            // sends a post request
+            contact_id: this.contact.id,
+            text: text
+          }).then((response) => {
+              this.$emit('new', response.data);
+          })
+
+        } // end of send message method
+
       }, // end of methods
       components: {MessagesFeed, MessageComposer} // registering components
   }

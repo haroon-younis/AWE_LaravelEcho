@@ -1,6 +1,7 @@
 <template>
     <div class="chat-app">
-      <Conversation :contact="selectedContact" :messages="messages" />
+      <!-- when 'new' event is fired a method is triggered-->
+      <Conversation :contact="selectedContact" :messages="messages" @new="saveNewMessage"/>
       <ContactsList :contacts="contacts" @selected="startConversionWith"/>
     </div>
 </template>
@@ -26,6 +27,11 @@
         },
 
         mounted() {
+            Echo.private(`messages.${this.user.id}`)
+                .listen('NewMessage', (e) => {
+                    this.handleIncoming(e.message); // calls method
+                })
+
             axios.get('/contacts')
                  .then((response) => {
                      this.contacts = response.data;
@@ -38,8 +44,21 @@
                    this.messages = response.data;
                    this.selectedContact = contact;
                  })
+          },
+          saveNewMessage(text) {
+            // send message
+            this.messages.push(text);
+          },
+          handleIncoming(message) {
+              // checks to see if we are in a conversation
+              if (this.selectedContact && message.from == this.selectedContact.id) {
+                  this.saveNewMessage(message);
+                  return;
+              }
+
+              alert(message.text);
           }
-        },
+        }, // end of methods
         components: {Conversation,  ContactsList}
     }
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class="composer">
+    <!-- text are to input a message. Once enter key has been pressed it will trigger the send method-->
     <textarea v-model="message" @keydown.enter="send" placeholder="Write a message"></textarea>
 
   </div>
@@ -13,12 +14,14 @@
       };
     },
     methods: {
-      send() {
-        if (this.message == '') {
+      send(e) {
+        e.preventDefault(); // when enter key is pressed message will be sent
+
+        if (this.message == '') { // checks if we have a message
           return;
         }
 
-        this.$emit('send', this.message);
+        this.$emit('send', this.message); // emit event send with the message
         this.message = ''; // clearing textarea
       }
     }

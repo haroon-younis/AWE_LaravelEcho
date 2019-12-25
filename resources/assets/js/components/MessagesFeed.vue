@@ -1,5 +1,5 @@
 <template>
-  <div class="feed">
+  <div class="feed" ref="feed">
     <ul v-if="contact"> <!-- only outputs ul if we have a contact selected-->
       <li v-for="message in messages" :class="`message${message.to == contact.id ? ' sent' : ' received'}`" :key="message.id">
         <!-- loop through messages -->
@@ -21,7 +21,23 @@
           type: Array,
           required: true
         }
-      } // end of props
+      }, // end of props
+      methods: {
+          scrollToBottom() {
+            setTimeout(() => {
+              // scroll to bottom of feed
+              this.$refs.feed.scrollTop = this.$refs.feed.scrollHeight - this.$refs.feed.clientHeight;
+            }, 50)
+          }
+      }, // end of methods
+      watch: {
+        contact(contact) { // once new contact is clicked
+            this.scrollToBottom(); // scroll to bottom of feed
+        },
+        messages(messages) { // when new message is updated
+            this.scrollToBottom(); // scroll to bottom of feed
+        }
+      }
   }
 </script>
 
